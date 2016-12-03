@@ -1,0 +1,8 @@
+# exclude data files
+datasampling/stock_data
+datasampling/stock_data.zip
+data/like
+data/dislike
+src/__pycache__
+src/util/__pycache__
+
