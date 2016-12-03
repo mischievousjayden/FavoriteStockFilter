@@ -1,12 +1,16 @@
-- Create target data directory
+Create target data directory
+--------------------
 make mktargetdir
 
-- Download data
+Download data
+--------------------
 make download
 
-- Use Sampled data
+Use Sampled data
+--------------------
 make sample
 
-- Use Original data
+Use Original data
+--------------------
 make origin
 
