@@ -23,6 +23,7 @@ n_cross_validation = 4
 learning_rate = 0.001
 training_iters = 1000
 display_step = 10
+logs_path = 'tmp/summaries'
 
 # Network Parameters
 n_input = 5 # the number of features
@@ -78,17 +79,31 @@ def createTrainTestData(cross_validation_data):
     test_features, test_label = cutData(cross_validation_data["test"], n_steps)
     return [train_features, train_label, test_features, test_label]
 
+# Encapsulating all ops into scopes,
+# making Tensorboard's Graph visualization more convenient
 
-print("create lstm nn")
-pred = RNN(x, weights, biases)
+# Construct model
+with tf.name_scope('Model'):
+    print("create lstm nn")
+    pred = RNN(x, weights, biases)
 
 # Define loss and optimizer
-cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(pred, y))
-optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
+with tf.name_scope('Cost'):
+    cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(pred, y))
+with tf.name_scope('AdamOptimizer'):
+    optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
 
 # Evaluate model
-correct_pred = tf.equal(tf.argmax(pred,1), tf.argmax(y,1))
-accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32))
+with tf.name_scope('Accuracy'):
+    correct_pred = tf.equal(tf.argmax(pred,1), tf.argmax(y,1))
+    accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32))
+
+# Create summaries to monitor cost tensor, accuracy tensor
+tf.scalar_summary('cost', cost)
+tf.scalar_summary('accuracy', accuracy)
+
+# Merge all summaries into a single op
+merged_summary_op = tf.merge_all_summaries()
 
 # Initializing the variables
 init = tf.initialize_all_variables()
@@ -101,23 +116,28 @@ with tf.Session() as sess:
 
         print("start learning")
         sess.run(init)
+
+        # op to write logs for Tensorboard
+        summary_writer = tf.train.SummaryWriter(logs_path + '-' + str(i), graph = tf.get_default_graph())
+
         step = 0
         display_flag = display_step
         # Keep training until reach max iterations
         while step < training_iters:
-            # Run optimization op (backprop)
-            sess.run(optimizer, feed_dict={x: train_data, y: train_label})
+            # Run optimization op (backprop) and merged summary op
+            _, summary = sess.run([optimizer, merged_summary_op], feed_dict={x: train_data, y: train_label})
             if display_flag < 0:
-            # Calculate batch accuracy
-                acc = sess.run(accuracy, feed_dict={x: train_data, y: train_label})
-                # Calculate batch loss
-                loss = sess.run(cost, feed_dict={x: train_data, y: train_label})
+                # Calculate batch accuracy and loss
+                acc, loss = sess.run([accuracy, cost], feed_dict={x: train_data, y: train_label})
                 print("Iter " + str(step) + \
                       ", Minibatch Loss: " + "{:.6f}".format(loss) + \
                       ", Training Accuracy: " + "{:.5f}".format(acc))
                 display_flag = display_step
             step += len(train_data)
             display_flag -= len(train_data)
+
+            # Write logs at every iteration
+            summary_writer.add_summary(summary, step)
         print("Optimization Finished!")
 
         # Calculate accuracy for 128 mnist test images
