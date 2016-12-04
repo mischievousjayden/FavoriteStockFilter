@@ -28,7 +28,7 @@ logs_path = 'tmp/summaries'
 # Network Parameters
 n_input = 5 # the number of features
 n_steps = 200 # the number of days
-n_hidden = 128 # 128 # hidden layer num of features
+n_hidden = 32 # hidden layer num of features
 n_classes = 2 # like or dislike
 
 # tf Graph input
@@ -114,7 +114,7 @@ with tf.Session() as sess:
         print("build train and test data")
         train_data, train_label, test_data, test_label = createTrainTestData(data.getCrossValidationInput(n_cross_validation, i))
 
-        print("start learning")
+        print("start learning", i)
         sess.run(init)
 
         # op to write logs for Tensorboard
