@@ -66,11 +66,18 @@ def RNN(x, weights, biases):
     return tf.matmul(outputs[-1], weights['out']) + biases['out']
 
 def cutData(data, num_row):
+    # cut day and normalize data
     features = []
     label = []
     for d in data:
-        # features.append(np.array(d["features"])[:n_steps,:])
-        features.append(np.flipud(np.flipud(d["features"])[:num_row,:]))
+        # cut day
+        modified = np.flipud(np.flipud(d["features"])[:num_row,:])
+
+        # standardize data
+        modified = (modified - np.mean(modified, 0)) / np.std(modified, 0)
+
+        # append
+        features.append(modified)
         label.append(d["label"])
     return [np.array(features), np.array(label)]
 
@@ -78,6 +85,7 @@ def createTrainTestData(cross_validation_data):
     train_features, train_label = cutData(cross_validation_data["train"], n_steps)
     test_features, test_label = cutData(cross_validation_data["test"], n_steps)
     return [train_features, train_label, test_features, test_label]
+
 
 # Encapsulating all ops into scopes,
 # making Tensorboard's Graph visualization more convenient
