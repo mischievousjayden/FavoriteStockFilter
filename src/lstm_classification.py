@@ -12,12 +12,6 @@ print("read data")
 data_path = "../data"
 data = dl.stockdata(data_path)
 
-# print("length " + str(len(data.input_data)))
-# print("length " + str(len(data.input_data["like"])))
-# print("length " + str(len(data.input_data["dislike"])))
-#
-# pdb.set_trace()
-
 # Parameters
 n_cross_validation = 4
 learning_rate = 0.001
@@ -114,7 +108,7 @@ tf.scalar_summary('accuracy', accuracy)
 merged_summary_op = tf.merge_all_summaries()
 
 # Initializing the variables
-init = tf.initialize_all_variables()
+init = tf.global_variables_initializer()
 
 # Launch the graph
 with tf.Session() as sess:
@@ -126,7 +120,7 @@ with tf.Session() as sess:
         sess.run(init)
 
         # op to write logs for Tensorboard
-        summary_writer = tf.train.SummaryWriter(logs_path + '-' + str(i), graph = tf.get_default_graph())
+        summary_writer = tf.train.SummaryWriter(logs_path + '-group-' + str(i) + '-iter-' + str(training_iters), graph = tf.get_default_graph())
 
         step = 0
         display_flag = display_step
@@ -146,9 +140,9 @@ with tf.Session() as sess:
 
             # Write logs at every iteration
             summary_writer.add_summary(summary, step)
-        print("Optimization Finished!")
+            print("Optimization Finished!")
 
-        # Calculate accuracy for 128 mnist test images
-        print("Testing Accuracy:", \
+            # Calculate accuracy for test data
+            print("Testing Accuracy:", \
                 sess.run(accuracy, feed_dict={x: test_data, y: test_label}))
 

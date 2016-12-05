@@ -3,8 +3,11 @@ TARGET_PATH="../data"
 SUFFIX=".csv"
 LIKE="like"
 DISLIKE="dislike"
+ZIP="stock_data.zip"
 
 download:
+	rm -rf $(DATA_PATH)
+	rm -rf $(ZIP)
 	wget http://cs.drexel.edu/~jk993/data/stock_data.zip
 	unzip stock_data.zip
 
@@ -23,4 +26,3 @@ mktargetdir:
 clean:
 	rm -rf $(TARGET_PATH)/$(LIKE)/*
 	rm -rf $(TARGET_PATH)/$(DISLIKE)/*
-
