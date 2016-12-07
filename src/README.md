@@ -1,12 +1,12 @@
 File Description
 ------------------------------
 1. datalayer.py
-- maintain data
-- read input files
-- prepare cross validation train and test data
+    - maintain data
+    - read input files
+    - prepare cross validation train and test data
 
 2. lstm_classification.py
-main program
+    - main program
 
 How to run
 ------------------------------
