@@ -2,6 +2,12 @@
 
 % Package to generate and customize Algorithm as per ACM style
 \usepackage[ruled]{algorithm2e}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{comment}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
 \renewcommand{\algorithmcfname}{ALGORITHM}
 \SetAlFnt{\small}
 \SetAlCapFnt{\small}
@@ -110,112 +116,145 @@ Why Recurrent Neural Networks can model time series data? One of the major short
 Are they really able to connect previous information to the present task? It depends on how far we look back for previous information. Sometimes, we only need recent information. Sometimes, we need information that is far back from now. Unfortunately, as the gap between the relevant information and the point where it is needed to becomes larger, RNNs become unable to learn to connect the information.\\
 Luckly, Long Short Term Memory networks can addres such problem. Remembering information for long periods of time is their default behavior! The main idea of LSTM network is that it contains LSTM blocks that can remember a value for an arbitrary length of time.
 
-\section{Mathmatics}
+\newpage
+\section{Approch}
 \label{sec:sim}
+This section describes theories and concepts used in the project
 
-If the model checker requests successors of a state which are not
-created yet, the state space uses the simulator to create the
-successors on-the-fly. To create successor states the simulator
-conducts the following steps.
-% enumerate
+\subsection{Basic concept of recurrent neural network (RNN)}
+RNN is a neural network but RNN has two input: one is from data, another is from previous output. Usually RNN is used with serial data. For example, human language sentence has series of words and data has time domain like driving data and stock data.
+
+\subsection{Long Short Term Memory (LSTM) networks}
+Basic RNN has problem of long term dependency \cite{UnderstandingLSTMNetworks}. It means that RNN is not able to memorize long term knowledge. To solve the problem, LSTM is introduced by Hochreiter and Schmidhuber \cite{hochreiter1997long}. LSTM has cell state and the cell state can store long term memory. LSTM has four layer and three of them effect to cell state. Colah's blog \cite{UnderstandingLSTMNetworks} summarizes concept and purpose of each layers. The paper \cite{zaremba2014recurrent} describes LSTM in mathematical term. In this paper, I'm going to summarize the blog \cite{UnderstandingLSTMNetworks} and the paper \cite{zaremba2014recurrent}
+
 \begin{enumerate}
-\item Load state into microcontroller model.
-\item Determine assignments needed for resolving nondeterminism.
-\item For each assignment.
-      \begin{enumerate}
-      \item either call interrupt handler or simulate effect of next instruction, or
-      \item evaluate truth values of atomic propositions.
-      \end{enumerate}
-\item Return resulting states.
+	\item Concept of each layers in LSTM\\
+		Bengio mentioned on his paper \cite{bengio2009learning} that each layers in deep neural network have purpose. LSTM has four layers and four layers have different purpose. Colah's blog \cite{UnderstandingLSTMNetworks} summarizes it.\\
+		The first layer is forget gate and effects to cell state and filters what data to forget or throw away. This layer is sigmoid layer with previous output and input data. The second layer is input gate and also effects to cell state and it decides what data to remember. The second layer is also sigmoid. The third layer is input modulation gate and also effects to cell state and it is tanh. Out put from second and third layers are added to previous cell state and updated for next cell state. Fourth layer is the last layer output gate and output is decided from result of output gate and updated cell state.
+
+	\item Modeling LSTM in mathematical term\\
+		LSTM is described in mathematical term in the paper \cite{zaremba2014recurrent}. I'm going to summarize it on this paper.\\
+		Let\\
+		$T_{n,m}: \mathbb{R}^n \rightarrow \mathbb{R}^m$ be an affine transform\\
+		$x_t$ be current input \\
+		$h_{t-1}$ be last output \\
+		$h_{t}$ be current output \\
+		$c_{t-1}$ be last cell state \\
+		$c_{t}$ be current cell state \\
+		
+\[
+\begin{bmatrix}
+    input gate \\
+    forget gate \\
+    output gate \\
+    input modulation gate
+\end{bmatrix}
+=
+\begin{bmatrix}
+    i \\
+    f \\
+    o \\
+    g
+\end{bmatrix}
+=
+\begin{bmatrix}
+    sigm \\
+    sigm \\
+    sigm \\
+    tanh
+\end{bmatrix}
+T_{2n,4n}
+\begin{bmatrix}
+    h_{t-1} \\
+    x_{x}
+\end{bmatrix}
+\]
+\[
+=
+\begin{bmatrix}
+    sigm \\
+    sigm \\
+    sigm \\
+    tanh
+\end{bmatrix}
+\begin{bmatrix}
+    {T^{hi}}_{n,n} & {T^{xi}}_{n,n} \\
+    {T^{hf}}_{n,n} & {T^{xf}}_{n,n} \\
+    {T^{ho}}_{n,n} & {T^{xo}}_{n,n} \\
+    {T^{hg}}_{n,n} & {T^{xg}}_{n,n}
+\end{bmatrix}
+\begin{bmatrix}
+    h_{t-1} \\
+    x_{x}
+\end{bmatrix}
+=
+\begin{bmatrix}
+    sigm \\
+    sigm \\
+    sigm \\
+    tanh
+\end{bmatrix}
+\begin{bmatrix}
+    {T^{hi}}_{n,n}h_{t-1} + {T^{xi}}_{n,n}x_{x} \\
+    {T^{hf}}_{n,n}h_{t-1} + {T^{xf}}_{n,n}x_{x} \\
+    {T^{ho}}_{n,n}h_{t-1} + {T^{xo}}_{n,n}x_{x} \\
+    {T^{hg}}_{n,n}h_{t-1} + {T^{xg}}_{n,n}x_{x}
+\end{bmatrix}
+\]
+Multiply two vector not matrix multiplication. Therefore,\\
+\[
+\begin{bmatrix}
+    i \\
+    f \\
+    o \\
+    g
+\end{bmatrix}
+=
+\begin{bmatrix}
+    sigm({T^{hi}}_{n,n}h_{t-1} + {T^{xi}}_{n,n}x_{x}) \\
+    sigm({T^{hf}}_{n,n}h_{t-1} + {T^{xf}}_{n,n}x_{x}) \\
+    sigm({T^{ho}}_{n,n}h_{t-1} + {T^{xo}}_{n,n}x_{x}) \\
+    tanh({T^{hg}}_{n,n}h_{t-1} + {T^{xg}}_{n,n}x_{x})
+\end{bmatrix}
+\]
+
+$\{i, f, o, g\}$ is a set of output from each layers.
+The current cell state $c_t = f \cdot c_{t-1} + i \cdot g$
+the current output $h_t = o \cdot tanh(c_t)$
+
 \end{enumerate}
-Figure~\ref{fig:one} shows a typical microcontroller C program that
-controls an automotive power window lift. The program is one of the
-programs used in the case study described in Section~\ref{sec:sim}.
-At first sight, the programs looks like an ANSI~C program. It
-contains function calls, assignments, if clauses, and while loops.
-% Figure
-\begin{figure}
-\centerline{\includegraphics{acmsmall-mouse}}
-\caption{Code before preprocessing.}
-\label{fig:one}
+
+\subsection{LSTM in Stock Filter}
+Our project uses LSTM to filter data. We created LSTM with size of 32 hidden layer. That means size of cell state and output is 32. After we map 200 weeks, we take last output from LSTM them map output layer. Output layer has two neurons and make result by using softmax. Following picture describes neural network
+
+\begin{figure}[H]
+	\begin{center}
+	\includegraphics[scale=0.7]{./pictures/FSFNN.png}
+	\caption{High Level Neural Network}
+	\label{GD}
+	\end{center}
 \end{figure}
 
-\subsection{Problem Formulation}
-
-The objective of variable coalescence-based offset assignment is to find
-both the coalescence scheme and the MWPC on the coalesced graph. We start
-with a few definitions and lemmas for variable coalescence.
-
-% Enunciations
-\begin{definition}[Coalesced Node (C-Node)]A C-node is a set of
-live ranges (webs) in the AG or IG that are coalesced. Nodes within the same
-C-node cannot interfere with each other on the IG. Before any coalescing is
-done, each live range is a C-node by itself.
-\end{definition}
-
-\begin{definition}[C-AG (Coalesced Access Graph)]The C-AG is the access
-graph after node coalescence, which is composed of all C-nodes and C-edges.
-\end{definition}
-
-\begin{lemma}
-The C-MWPC problem is NP-complete.
-\end{lemma}
-\begin{proof} C-MWPC can be easily reduced to the MWPC problem assuming a
-coalescence graph without any edge or a fully connected interference graph.
-Therefore, each C-node is an uncoalesced live range after value separation
-and C-PC is equivalent to PC. A fully connected interference graph is made
-possible when all live ranges interfere with each other. Thus, the C-MWPC
-problem is NP-complete.
-\end{proof}
-
-\begin{lemma}[Lemma Subhead]The solution to the C-MWPC problem is no
-worse than the solution to the MWPC.
-\end{lemma}
-\begin{proof}
-Simply, any solution to the MWPC is also a solution to the
-C-MWPC. But some solutions to C-MWPC may not apply to the MWPC (if any
-coalescing were made).
-\end{proof}
-
+\newpage
 \section{Evaluation}
+\subsection{Data}
+\begin{enumerate}
+	\item Features in stock data\\
+		Stock data has 7 features: date, open, high, low, close, volumn, and adj close. Date is when stock data is recorded. Open price is stock price when market open. Close price is when market close. High price is the highest price during market time and low is the lowest price during market time. However, we only use 5 features: high, low, close, volumn because we do not need date and adj close price. 
+		
+	\item 200 Weekly data\\
+		To classify stocks, each stock should have enough data. In the project, we use 200 weekly data from each stock. 200 weeks is almost 4 years data.
+		
+	\item Class\\
+		Stocks in our data are divided to two groups: like and dislike. Stock market trader gave the data for the project. We assume that stocks in like group are effected by some big money so the stocks has supported line and stocks in dislike group does not have support line. 
+\end{enumerate}
 
-During all the experiments, the Geographic Forwarding (GF)
-[Akyildiz 2001] routing protocol is used. GF exploits geographic
-information of nodes and conducts local data-forwarding to achieve
-end-to-end routing. Our simulation is
-configured according to the settings in
-Table~\ref{tab:one}. Each run lasts for 2 minutes and
-repeated 100 times. For each data value we present in the results,
-we also give its 90\% confidence interval.
-% Table
-\begin{table}%
-\tbl{Simulation Configuration\label{tab:one}}{%
-\begin{tabular}{|l|l|}
-\hline
-TERRAIN{$^a$}   & (200m$\times$200m) Square\\\hline
-Node Number     & 289\\\hline
-Node Placement  & Uniform\\\hline
-Application     & Many-to-Many/Gossip CBR Streams\\\hline
-Payload Size    & 32 bytes\\\hline
-Routing Layer   & GF\\\hline
-MAC Layer       & CSMA/MMSN\\\hline
-Radio Layer     & RADIO-ACCNOISE\\\hline
-Radio Bandwidth & 250Kbps\\\hline
-Radio Range     & 20m--45m\\\hline
-\end{tabular}}
-\begin{tabnote}%
-\Note{Source:}{This is a table
-sourcenote. This is a table sourcenote. This is a table
-sourcenote.}
-\vskip2pt
-\Note{Note:}{This is a table footnote.}
-\tabnoteentry{$^a$}{This is a table footnote. This is a
-table footnote. This is a table footnote.}
-\end{tabnote}%
-\end{table}%
+\subsection{Data}
 
+\subsection{Data}
+
+\newpage
 \section{Conclusions}
-
 In this article, we develop the first multifrequency MAC protocol for
 WSN applications in which each device adopts a
 single radio transceiver. The different MAC design requirements for
@@ -224,8 +263,9 @@ compared, and a complete WSN multifrequency MAC design (MMSN) is
 put forth. During the MMSN design, we analyze and evaluate different
 choices for frequency assignments and also discuss the nonuniform
 back-off algorithms for the slotted media access design.
-
-\newpage
+\\
+\\
+\\
 \section{Future Work}
 The following are future works. There are two parts, one is samll updates and changes. The second part is about making it an stand alone API.
 \subsection{Small Improvements}
@@ -243,13 +283,9 @@ We can always improve our model. As shown above, there are three interesting cha
 \end{enumerate}
 
 \newpage
-\section{Bibliography}
-1. Jason Brownlee, Time Series Prediction with LSTM Recurrent Neural Networks in Python with Keras, 2012, http://machinelearningmastery.com/time-series-prediction-lstm-recurrent-neural-networks-python-keras/ \\
-2. Yoshua Bengio, Learning Deep Architectures for AI, 2009, published by the essence of knowledge \\
-3. Jurgen Schmidhuber, Deep learning in neural networks: An overview, 2015, http://www2.econ.iastate.edu/tesfatsi/DeepLearningInNeuralNetworksOverview.JSchmidhuber2015.pdf \\
-4. Wojciech Zaremba, Recurrent Neural Network Regularization, 2015, https://arxiv.org/pdf/1409.2329.pdf \\
-5. Colah, Understanding LSTM Networks. 2015, http://colah.github.io/posts/2015-08-Understanding-LSTMs/\\
-6. Ajit Jaokar, Recurrent Neural Networks, Time series data and IoT - Part One, 2015, http://www.datasciencecentral.com/profiles/blogs/recurrent-neural-networks-time-series-data-and-iot-part-one
+\bibliographystyle{plain}
+\bibliography{references.bib}
+
 
 \end{document}
 % End of v2-acmsmall-sample.tex (March 2012) - Gerry Murray, ACM
