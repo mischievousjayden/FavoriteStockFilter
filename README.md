@@ -1,5 +1,6 @@
 # FavoriteStockFilter
 ------------------------------
+This project classify weekly stock data by LSTM. Stocks are classified to 'like' or 'dislike'
 
 ## Environment
 ------------------------------
