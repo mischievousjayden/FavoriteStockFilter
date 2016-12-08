@@ -108,7 +108,8 @@ tf.scalar_summary('accuracy', accuracy)
 merged_summary_op = tf.merge_all_summaries()
 
 # Initializing the variables
-init = tf.global_variables_initializer()
+# init = tf.global_variables_initializer()
+init = tf.initialize_all_variables()
 
 # Launch the graph
 with tf.Session() as sess:
@@ -140,9 +141,10 @@ with tf.Session() as sess:
 
             # Write logs at every iteration
             summary_writer.add_summary(summary, step)
-            print("Optimization Finished!")
 
-            # Calculate accuracy for test data
-            print("Testing Accuracy:", \
-                sess.run(accuracy, feed_dict={x: test_data, y: test_label}))
+        print("Optimization Finished!")
+
+        # Calculate accuracy for test data
+        print("Testing Accuracy:", \
+            sess.run(accuracy, feed_dict={x: test_data, y: test_label}))
 
