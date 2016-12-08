@@ -19,21 +19,21 @@
 
 
 \begin{abstract}
-Recurrent Neural Network has been well understood in handling
-Time series data. Different from feedforward neural networks,
+Recurrent Neural Network has been well understood in handling 
+Time series data. Different from feedforward neural networks, 
 recurrent neual network has internla memory to process temporal
 related sequences of inputs. However, not all recurrent neural network
 can handle "long-term" dependencies. The reasons are explored in depth
-by Hochereiter (1991) [German] and Bengio, et al. (1994). In our project, we
+by Hochereiter (1991) [German] and Bengio, et al. (1994). In our project, we 
 use Long Short Term Memory network - usually just called "LSTMs" to model
-Time series data. Unlike other RNN, LSTMs are explicityly designed to avoid the
-long-term dependency problem. In this paper, we will show how LSTMs are used
-to train a model that can handle real-world stock data of 200 weeks in temporal length.
-The model classify stock into two class. One is manipulated and the other is
-non manipulated. Through carefully designed training, the cross validation
-shows that our model has a accuracy of 80\% ~ 90\%. We also observed that
-the accuracy drops when iterations we used to train our data increased.
-Besides, cost drops as the number of iterations increase.
+Time series data. Unlike other RNN, LSTMs are explicityly designed to avoid the 
+long-term dependency problem. In this paper, we will show how LSTMs are used 
+to train a model that can handle real-world stock data of 200 weeks in temporal length. 
+The model classify stock into two class. One is manipulated and the other is 
+non manipulated. Through carefully designed training, the cross validation 
+shows that our model has a accuracy of 80\% ~ 90\%. We also observed that 
+the accuracy drops when iterations we used to train our data increased. 
+Besides, cost drops as the number of iterations increase. 
 \end{abstract}
 
 
@@ -41,42 +41,42 @@ Besides, cost drops as the number of iterations increase.
 \section{Background}
 
 \subsection{The goal of the project}
-As the development of computer science and computer enginerring, our computer, or
-system, to be more accurate, runs faster than ever before. Trading firm takes advantage of
-this. Due to this reason, high performance trading has been created, which relies on high
-performance computing and low latency system to provide very important trading information
+As the development of computer science and computer enginerring, our computer, or 
+system, to be more accurate, runs faster than ever before. Trading firm takes advantage of 
+this. Due to this reason, high performance trading has been created, which relies on high 
+performance computing and low latency system to provide very important trading information 
 and help traders make trading decisions. \\\\
-One of the simplest trading strategy is investing the safe stocks. So what is safe stocks?
-Safe stocks are manipulated stocks. Because they are manipulated, they tend to have a safe line
-and a foreseeable peak value. Traders can make safe decision by investing in manipulated stocks
+One of the simplest trading strategy is investing the safe stocks. So what is safe stocks? 
+Safe stocks are manipulated stocks. Because they are manipulated, they tend to have a safe line 
+and a foreseeable peak value. Traders can make safe decision by investing in manipulated stocks 
 when their prices are near the safe line and sell stocks when they are closing to highest value. \\\\
-The goal of this project is to train a model that can classify "good" stock and "bad" stock, and therefore,
+The goal of this project is to train a model that can classify "good" stock and "bad" stock, and therefore, 
 can be used to help all investor to make decision wisely.
 
 \subsection{Challenges}
 There are two big challenges we are facing during this project. They are both caused by one thing,
-that is the input data.
+that is the input data. 
 
 \begin{itemize}
-\item Stock data is time series data. Time series data add extra
-difficulties in how to handle it. Unlike normal data, time series mean that the next
-value in a time serie is affected by the previous one. We know that we can train
-neural networks with historical data and objective to discover hidden dependencies and
-to predict stock type. Therefore, to solve this problem, we need to answer this question
+\item Stock data is time series data. Time series data add extra 
+difficulties in how to handle it. Unlike normal data, time series mean that the next 
+value in a time serie is affected by the previous one. We know that we can train 
+neural networks with historical data and objective to discover hidden dependencies and 
+to predict stock type. Therefore, to solve this problem, we need to answer this question 
 that how can we model time series?
-\item Another problem is that stock prices vary from each other. Some stocks rage from
-0 ~ 10, some range from 0 ~ 100. Due to this reason, we had difficulty to understand the outcome
-of our model. Since we are not sure whether we train the model in a correct way, it costed us a very
+\item Another problem is that stock prices vary from each other. Some stocks rage from 
+0 ~ 10, some range from 0 ~ 100. Due to this reason, we had difficulty to understand the outcome 
+of our model. Since we are not sure whether we train the model in a correct way, it costed us a very 
 long to figure out where went wrong. The solution is simple, normalizing input data.
 \end{itemize}
 
 
 \section{Related Work}
-To implement our model, we read many useful article, paper and blogs. The following are
+To implement our model, we read many useful article, paper and blogs. The following are 
 summaries of some of them. The others will be mentioned as references at the bottom of the paper.
 
 \subsection{Recurrent neural networks, Time series data and IoT - Part One [Ajit Jaokar]}
-This blog \cite{RecurrentNeuralNetworksTimeSeriesData} explores the relationship between recurrent neural networks (RNNs) and IoT data (Time series data). \\
+This blog [2] explores the relationship between recurrent neural networks (RNNs) and IoT data (Time series data). \\
 There are two parts that are very helpful for us to implement our mode. Therefore, I only mention those two important parts here. \\ Firstly, why Time Series applications are different. In our case, Time Series applications mean prediction application that uses Time series data to predict the future value. Different from calssical pattern recognition problems, who are more concerned with knowing dependencies between variables (Regression) or in classification of input vectors into categories (Classification). The biggest difference is that time series data has an additional temporal dimension. \\ Secondly, why neural networks can be used. Neural networks are a strong choice when we have scenarios that there are too many factors influencing the outcome, and that there are hidden/unknown factors influencing the outome. In such case, the focus is not to find the precise solution to the problem but to find a possible steady where the system will converge. Neural networks often apply in such cases for the reason that they are able to learn from history examples and are able to catch hidden dependencies. \ Therefore, the problem becomes how can we model Time in the neural network.
 
 \subsection{Understandling LSTM Networks}
@@ -93,15 +93,15 @@ This section describes theories and concepts used in the project
 RNN is a neural network but RNN has two input: one is from data, another is from previous output. Usually RNN is used with serial data. For example, human language sentence has series of words and data has time domain like driving data and stock data.
 
 \subsection{Long Short Term Memory (LSTM) networks}
-Basic RNN has problem of long term dependency \cite{UnderstandingLSTMNetworks}. It means that RNN is not able to memorize long term knowledge. To solve the problem, LSTM is introduced by Hochreiter and Schmidhuber \cite{hochreiter1997long}. LSTM has cell state and the cell state can store long term memory. LSTM has four layer and three of them effect to cell state. Colah's blog \cite{UnderstandingLSTMNetworks} summarizes concept and purpose of each layers. The paper \cite{zaremba2014recurrent} describes LSTM in mathematical term. In this paper, I'm going to summarize the blog \cite{UnderstandingLSTMNetworks} and the paper \cite{zaremba2014recurrent}
+Basic RNN has problem of long term dependency [4]. It means that RNN is not able to memorize long term knowledge. To solve the problem, LSTM is introduced by Hochreiter and Schmidhuber [2]. LSTM has cell state and the cell state can store long term memory. LSTM has four layer and three of them effect to cell state. Colah's blog [4] summarizes concept and purpose of each layers. The paper [5] describes LSTM in mathematical term. In this paper, I'm going to summarize the blog [4] and the paper [5]
 
 \begin{enumerate}
 	\item Concept of each layers in LSTM\\
-		Bengio mentioned on his paper \cite{bengio2009learning} that each layers in deep neural network have purpose. LSTM has four layers and four layers have different purpose. Colah's blog \cite{UnderstandingLSTMNetworks} summarizes it.\\
+		Bengio mentioned on his paper [1] that each layers in deep neural network have purpose. LSTM has four layers and four layers have different purpose. Colah's blog [4] summarizes it.\\
 		The first layer is forget gate and effects to cell state and filters what data to forget or throw away. This layer is sigmoid layer with previous output and input data. The second layer is input gate and also effects to cell state and it decides what data to remember. The second layer is also sigmoid. The third layer is input modulation gate and also effects to cell state and it is tanh. Out put from second and third layers are added to previous cell state and updated for next cell state. Fourth layer is the last layer output gate and output is decided from result of output gate and updated cell state.
 
 	\item Modeling LSTM in mathematical term\\
-		LSTM is described in mathematical term in the paper \cite{zaremba2014recurrent}. I'm going to summarize it on this paper.\\
+		LSTM is described in mathematical term in the paper [5]. I'm going to summarize it on this paper.\\
 		Let\\
 		$T_{n,m}: \mathbb{R}^n \rightarrow \mathbb{R}^m$ be an affine transform\\
 		$x_t$ be current input \\
@@ -109,7 +109,7 @@ Basic RNN has problem of long term dependency \cite{UnderstandingLSTMNetworks}. 
 		$h_{t}$ be current output \\
 		$c_{t-1}$ be last cell state \\
 		$c_{t}$ be current cell state \\
-
+		
 \[
 \begin{bmatrix}
     input gate \\
@@ -208,13 +208,13 @@ Our project uses LSTM to filter data. We created LSTM with size of 32 hidden lay
 \subsection{Data}
 \begin{enumerate}
 	\item Features in stock data\\
-		Stock data has 7 features: date, open, high, low, close, volumn, and adj close. Date is when stock data is recorded. Open price is stock price when market open. Close price is when market close. High price is the highest price during market time and low is the lowest price during market time. However, we only use 5 features: high, low, close, volumn because we do not need date and adj close price.
-
+		Stock data has 7 features: date, open, high, low, close, volumn, and adj close. Date is when stock data is recorded. Open price is stock price when market open. Close price is when market close. High price is the highest price during market time and low is the lowest price during market time. However, we only use 5 features: high, low, close, volumn because we do not need date and adj close price. 
+		
 	\item Normalized 200 week stock data\\
 		To classify stocks, each stock should have enough data. In the project, we use 200 week data from each stock. 200 weeks is almost 4 years data. We also normalize each stock data because each stock has various range of stock price and volume.
-
+		
 	\item Class\\
-		Stocks in our data are divided to two groups: like and dislike. Stock market trader gave the data for the project. We assume that stocks in like group are effected by some big money so the stocks has supported line and stocks in dislike group does not have support line.
+		Stocks in our data are divided to two groups: like and dislike. Stock market trader gave the data for the project. We assume that stocks in like group are effected by some big money so the stocks has supported line and stocks in dislike group does not have support line. 
 \end{enumerate}
 
 \subsection{Cross Validation}
@@ -264,8 +264,8 @@ The following are future works. There are two parts, one is samll updates and ch
 \subsection{Small Improvements}
 \begin{enumerate}
 \item Current, we are using weekly stock data to train and test our mode. Which means our model only support weekly stock data. Our next improvement is obivous, that is to support daily and yearly stock data for the reason that yearly and daily stock data are also very common.
-\item The second improvement is to support dynamic time frame. Currently, we are using fixed temporal length of stock data, which is 200 weeks in temporal length. The limitation of fixed length is that not all stock is published for that long. With the support of dynamic time frame, we can analysis all stock theoretically.
-\item Only classifying stocks may not be usful. Even with a "good" stock at hand, many people still do not know how to do. The best way is to tell people when to buy which one. In other to do that, we need to train a model to detect increase signal.
+\item The second improvement is to support dynamic time frame. Currently, we are using fixed temporal length of stock data, which is 200 weeks in temporal length. The limitation of fixed length is that not all stock is published for that long. With the support of dynamic time frame, we can analysis all stock theoretically. 
+\item Only classifying stocks may not be usful. Even with a "good" stock at hand, many people still do not know how to do. The best way is to tell people when to buy which one. In other to do that, we need to train a model to detect increase signal. 
 \end{enumerate}
 
 \subsection{Stand alone API}
@@ -276,7 +276,19 @@ We can always improve our model. As shown above, there are three interesting cha
 \end{enumerate}
 
 \newpage
-\bibliographystyle{plain}
-\bibliography{references.bib}
+\section{Reference}
+\begin{enumerate}
+\item Yoshua Bengio. Learning deep architectures for ai. Foundations and trends in Machine Learning, 2(1):1–127, 2009.
+
+\item Sepp Hochreiter and J¨urgen Schmidhuber. Long short-term memory. Neural computation, 9(8):1735–1780, 1997.
+
+\item Ajit Jaokar. Recurrent neural networks, time series data and iot. http://www.datasciencecentral.com/profiles/blogs/ recurrent-neural-networks-time-series-data-and-iot-part-one, 2015. [Online; accessed 2016-12-07].
+
+\item Christopher Olah. Understanding lstm networks. http://colah.github.io/posts/2015-08-Understanding-LSTMs/, 2015. [Online; accessed 2016-12-07].
+
+\item Wojciech Zaremba, Ilya Sutskever, and Oriol Vinyals. Recurrent neural network regularization. arXiv preprint arXiv:1409.2329, 2014.
+
+\end{enumerate}
+
 
 \end{document}
