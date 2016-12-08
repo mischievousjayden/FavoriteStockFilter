@@ -141,9 +141,10 @@ with tf.Session() as sess:
 
             # Write logs at every iteration
             summary_writer.add_summary(summary, step)
-            # print("Optimization Finished!")
 
-            # Calculate accuracy for test data
-            print("Testing Accuracy:", \
-                sess.run(accuracy, feed_dict={x: test_data, y: test_label}))
+        print("Optimization Finished!")
+
+        # Calculate accuracy for test data
+        print("Testing Accuracy:", \
+            sess.run(accuracy, feed_dict={x: test_data, y: test_label}))
 
