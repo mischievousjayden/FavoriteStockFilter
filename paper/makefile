@@ -1,12 +1,11 @@
 FILE=paper
 
 build: clean
-	latex ${FILE}
+	pdflatex ${FILE}
 	bibtex ${FILE}
-	latex ${FILE}
-	latex ${FILE}
+	pdflatex ${FILE}
 	pdflatex ${FILE}
 
 clean:
-	rm -rf *.log *.aux *.bbl *.blg *.dvi *.pdf
+	rm -rf *.log *.aux *.bbl *.blg *.dvi
 
